@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Revolut Demo</string>
+
+    <!-- Generic -->
+    <string name="unknown">Unknown</string>
+
+    <string name="initial_amount">1</string>
+
+</resources>
