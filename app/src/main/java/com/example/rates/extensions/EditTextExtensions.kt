@@ -1,10 +1,10 @@
 package com.example.rates.extensions
 
 import android.widget.EditText
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 
 fun EditText.setupRateEditText(
-    item: RateItem?
+    item: CurrencyModel?
 ) {
     item?.let {
         item.rate?.let { rate ->

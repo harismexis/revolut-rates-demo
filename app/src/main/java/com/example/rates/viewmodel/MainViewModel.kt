@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.rates.extensions.convertToUiModels
 import com.example.rates.extensions.getErrorMessage
 import com.example.rates.model.CurrencyCode.EUR
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 import com.example.rates.model.RateResponse
 import com.example.rates.repository.RatesRepository
 import com.example.rates.util.setSchedulersObservable
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    var remoteRepository: RatesRepository
+    var rateRepository: RatesRepository
 ) : ViewModel() {
 
     private var disposables: CompositeDisposable? = null
@@ -31,13 +31,12 @@ class MainViewModel @Inject constructor(
     }
 
     private val TAG = MainViewModel::class.qualifiedName
-
-    private val uiModels = ArrayList<RateItem>()
+    private val uiModels = ArrayList<CurrencyModel>()
     private var baseAmount: Float? = INITIAL_BASE_AMOUNT
     private var baseCurrency: String = EUR.key
 
-    private val mRates = MutableLiveData<List<RateItem>?>()
-    val rates: LiveData<List<RateItem>?>
+    private val mRates = MutableLiveData<List<CurrencyModel>?>()
+    val rates: LiveData<List<CurrencyModel>?>
         get() = mRates
 
     fun startRateUpdate() {
@@ -72,10 +71,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getRatesSingle(): Single<RateResponse?> {
-        return remoteRepository.getRatesSingle(baseCurrency)
+        return rateRepository.getRatesSingle(baseCurrency)
             .compose(setSchedulersSingle())
             .doOnSuccess {
-                val models = it.convertToUiModels(baseAmount)
+                val models = it.convertToUiModels(baseCurrency, baseAmount)
                 uiModels.clear()
                 uiModels.addAll(models)
                 mRates.value = uiModels
@@ -101,13 +100,3 @@ class MainViewModel @Inject constructor(
     }
 
 }
-
-//    fun getInitialItems(): List<RateItem> {
-//        val list = ArrayList<RateItem>()
-//        CurrencyCode.values().forEach {
-//            list.add(
-//                RateItem(it, INITIAL_RATE, INITIAL_BASE_AMOUNT)
-//            )
-//        }
-//        return list
-//    }

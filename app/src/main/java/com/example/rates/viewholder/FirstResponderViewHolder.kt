@@ -3,7 +3,7 @@ package com.example.rates.viewholder
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 
 class FirstResponderViewHolder(
     view: View,
@@ -17,7 +17,7 @@ class FirstResponderViewHolder(
     }
 
     override fun bind(
-        item: RateItem?,
+        item: CurrencyModel?,
         position: Int
     ) {
         super.bind(item, position)

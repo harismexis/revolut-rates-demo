@@ -1,7 +1,7 @@
 package com.example.rates.viewholder
 
 import android.view.View
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 import com.example.rates.model.getAmount
 
 class ResponderViewHolder(
@@ -10,11 +10,11 @@ class ResponderViewHolder(
 ) : BaseResponderViewHolder(view) {
 
     interface ItemClickListener {
-        fun onItemClick(item: RateItem, position: Int)
+        fun onItemClick(item: CurrencyModel, position: Int)
     }
 
     override fun bind(
-        item: RateItem?,
+        item: CurrencyModel?,
         position: Int
     ) {
         super.bind(item, position)

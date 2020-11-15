@@ -14,7 +14,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.rates.R
 import com.example.rates.extensions.setTextOrUnknown
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 import com.example.rates.model.getFlag
 
 
@@ -28,7 +28,7 @@ open class BaseResponderViewHolder(
     protected var etxtAmount: EditText = itemView.findViewById(R.id.etxtAmount)
 
     open fun bind(
-        item: RateItem?,
+        item: CurrencyModel?,
         position: Int
     ) {
         Glide.with(itemView.context)

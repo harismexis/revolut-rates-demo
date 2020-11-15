@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rates.R
 import com.example.rates.adapter.RateAdapter
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 import com.example.rates.viewholder.FirstResponderViewHolder
 import com.example.rates.viewholder.ResponderViewHolder
 import com.example.rates.viewmodel.MainViewModel
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
 
     private lateinit var viewModel: MainViewModel
 
-    private var rates: MutableList<RateItem> = mutableListOf()
+    private var rates: MutableList<CurrencyModel> = mutableListOf()
     private lateinit var adapter: RateAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
     }
 
     override fun onItemClick(
-        item: RateItem,
+        item: CurrencyModel,
         position: Int
     ) {
         viewModel.stopRateUpdate()
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
         })
     }
 
-    private fun updateRecycler(list: List<RateItem>) {
+    private fun updateRecycler(list: List<CurrencyModel>) {
         rates.clear()
         rates.addAll(list)
         adapter.notifyClientsChanged()

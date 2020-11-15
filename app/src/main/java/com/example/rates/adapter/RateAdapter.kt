@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rates.R
-import com.example.rates.model.RateItem
+import com.example.rates.model.CurrencyModel
 import com.example.rates.viewholder.BaseResponderViewHolder
 import com.example.rates.viewholder.FirstResponderViewHolder
 import com.example.rates.viewholder.ResponderViewHolder
 
 class RateAdapter(
-    private var rates: List<RateItem>,
+    private var rates: List<CurrencyModel>,
     private var responderListener: FirstResponderViewHolder.FirstResponderListener,
     private var itemClickListener: ResponderViewHolder.ItemClickListener
 ) : RecyclerView.Adapter<BaseResponderViewHolder>() {
