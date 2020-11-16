@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rates.R
 import com.example.rates.adapter.CurrencyAdapter
 import com.example.rates.model.CurrencyModel
+import com.example.rates.util.NetworkConnectionListener
 import com.example.rates.viewholder.FirstResponderViewHolder
 import com.example.rates.viewholder.ResponderViewHolder
 import com.example.rates.viewmodel.MainViewModel
@@ -16,16 +17,18 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
-    FirstResponderViewHolder.FirstResponderListener {
+class MainActivity : AppCompatActivity(),
+    ResponderViewHolder.ItemClickListener,
+    FirstResponderViewHolder.FirstResponderListener,
+    NetworkConnectionListener.NetworkConnectionClient {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: MainViewModel
-
     private var currencies: MutableList<CurrencyModel> = mutableListOf()
     private lateinit var adapter: CurrencyAdapter
+    private lateinit var networkListener: NetworkConnectionListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -33,16 +36,18 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProviders.of(this, viewModelFactory)[MainViewModel::class.java]
         initRecycler()
+        networkListener = NetworkConnectionListener(this)
         observeLiveData()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.startRateUpdate()
+        networkListener.startListen()
     }
 
     override fun onPause() {
         super.onPause()
+        networkListener.stopListen()
         viewModel.stopRateUpdate()
     }
 
@@ -67,7 +72,7 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
     override fun onResponderTextChanged(text: String) {
         val amount = viewModel.filterResponderText(text)
         viewModel.setBaseAmount(amount.toFloat())
-        adapter.notifyClientsChanged()
+        adapter.notifyDataChanged()
     }
 
     override fun afterResponderTextChanged(text: String) {
@@ -98,11 +103,19 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
     private fun updateRecycler(list: List<CurrencyModel>) {
         currencies.clear()
         currencies.addAll(list)
-        adapter.notifyClientsChanged()
+        adapter.notifyDataChanged()
     }
 
     private fun enableAnimationOnRecycler(enable: Boolean) {
         (recycler.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = enable
+    }
+
+    override fun onNetworkConnectionAvailable() {
+        viewModel.startRateUpdate()
+    }
+
+    override fun onNetworkConnectionLost() {
+        viewModel.stopRateUpdate()
     }
 
 }

@@ -17,7 +17,7 @@ fun RateResponse?.convertToUiModels(
                     entry.value,
                     baseAmount
                 )
-                if (entry.value == null && entry.key.key == baseCurrencyKey) {
+                if (entry.key.key == baseCurrencyKey) {
                     firstResponder = uiModel
                 } else {
                     uiModels.add(uiModel)

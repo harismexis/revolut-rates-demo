@@ -60,7 +60,7 @@ class CurrencyAdapter(
         holder.unbind()
     }
 
-    fun notifyClientsChanged() {
+    fun notifyDataChanged() {
         notifyItemRangeChanged(1, itemCount - 1)
     }
 }

@@ -73,6 +73,9 @@ class MainViewModel @Inject constructor(
         return Observable.interval(0, 1, TimeUnit.SECONDS)
             .flatMapSingle { getRatesSingle() }
             .compose(setSchedulersObservable(schedulerProvider))
+            .doOnError {
+                stopRateUpdate()
+            }
             .subscribe()
     }
 
@@ -89,6 +92,7 @@ class MainViewModel @Inject constructor(
                 Log.d(TAG, it.getErrorMessage())
                 mRates.value = null
             }
+
     }
 
     fun stopRateUpdate() {
