@@ -88,7 +88,9 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
     private fun observeLiveData() {
         viewModel.rates.observe(this, { uiModels ->
             uiModels?.let {
-                updateRecycler(it)
+                if (it.isNotEmpty()) {
+                    updateRecycler(it)
+                }
             }
         })
     }

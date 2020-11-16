@@ -4,21 +4,19 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.SingleTransformer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
-fun <T> setSchedulersSingle(): SingleTransformer<T, T> {
+fun <T> setSchedulersSingle(provider: BaseSchedulerProvider): SingleTransformer<T, T> {
     return SingleTransformer { upstream: Single<T> ->
         upstream
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(provider.io())
+            .observeOn(provider.ui())
     }
 }
 
-fun <T> setSchedulersObservable(): ObservableTransformer<T, T> {
+fun <T> setSchedulersObservable(provider: BaseSchedulerProvider): ObservableTransformer<T, T> {
     return ObservableTransformer { observable: Observable<T> ->
         observable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(provider.io())
+            .observeOn(provider.ui())
     }
 }

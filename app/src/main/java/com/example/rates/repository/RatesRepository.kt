@@ -30,9 +30,9 @@ class RatesRepository @Inject constructor() : BaseRemoteRepository() {
     }
 
     fun getRatesSingle(
-        base: String
+        baseCurrency: String
     ): Single<RateResponse?> {
-        return ratesApi.getRatesSingle(base)
+        return ratesApi.getRatesSingle(baseCurrency)
     }
 
 }

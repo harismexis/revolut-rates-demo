@@ -11,6 +11,8 @@ import com.example.rates.model.Currency.EUR
 import com.example.rates.model.CurrencyModel
 import com.example.rates.model.RateResponse
 import com.example.rates.repository.RatesRepository
+import com.example.rates.util.BaseSchedulerProvider
+import com.example.rates.util.SchedulerProvider
 import com.example.rates.util.setSchedulersObservable
 import com.example.rates.util.setSchedulersSingle
 import io.reactivex.Observable
@@ -25,6 +27,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var disposables: CompositeDisposable? = null
+    private var schedulerProvider: BaseSchedulerProvider = SchedulerProvider()
 
     companion object {
         private const val INITIAL_BASE_AMOUNT = 1.0f
@@ -40,17 +43,6 @@ class MainViewModel @Inject constructor(
     private val mRates = MutableLiveData<List<CurrencyModel>?>()
     val rates: LiveData<List<CurrencyModel>?>
         get() = mRates
-
-    fun startRateUpdate() {
-        if (isRateUpdateActive()) return
-        disposables = CompositeDisposable()
-        disposables?.add(getScheduleDisposable())
-    }
-
-    fun stopRateUpdate() {
-        disposables?.dispose()
-        disposables = null
-    }
 
     fun setBaseAmount(amount: Float?) {
         amount?.let {
@@ -72,9 +64,22 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun startRateUpdate() {
+        if (isRateUpdateActive()) return
+        disposables = CompositeDisposable()
+        disposables?.add(getScheduleDisposable())
+    }
+
+    private fun getScheduleDisposable(): Disposable {
+        return Observable.interval(0, 1, TimeUnit.SECONDS)
+            .flatMapSingle { getRatesSingle() }
+            .compose(setSchedulersObservable(schedulerProvider))
+            .subscribe()
+    }
+
     private fun getRatesSingle(): Single<RateResponse?> {
         return rateRepository.getRatesSingle(baseCurrency)
-            .compose(setSchedulersSingle())
+            .compose(setSchedulersSingle(schedulerProvider))
             .doOnSuccess {
                 val models = it.convertToUiModels(baseCurrency, baseAmount)
                 uiModels.clear()
@@ -87,11 +92,9 @@ class MainViewModel @Inject constructor(
             }
     }
 
-    private fun getScheduleDisposable(): Disposable {
-        return Observable.interval(0, 1, TimeUnit.SECONDS)
-            .flatMapSingle { getRatesSingle() }
-            .compose(setSchedulersObservable())
-            .subscribe()
+    fun stopRateUpdate() {
+        disposables?.dispose()
+        disposables = null
     }
 
     private fun isRateUpdateActive(): Boolean {
@@ -109,6 +112,10 @@ class MainViewModel @Inject constructor(
             )
         }
         return list
+    }
+
+    fun setSchedulerProvider(provider: BaseSchedulerProvider) {
+        this.schedulerProvider = provider
     }
 
 }

@@ -57,9 +57,7 @@ buildscript {
 
                 "com.google.code.gson:gson:$gson",
                 "com.squareup.retrofit2:converter-gson:$retrofit_gson",
-                "com.squareup.retrofit2:retrofit:$retrofit",
-
-                "com.airbnb.android:lottie:$lottie"
+                "com.squareup.retrofit2:retrofit:$retrofit"
         ]
 
         librariesKapt = [
