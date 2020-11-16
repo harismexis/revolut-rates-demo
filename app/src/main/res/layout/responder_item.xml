@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/responder_item_padding_horizontal"
+    android:paddingTop="@dimen/responder_item_padding_vertical"
+    android:paddingEnd="@dimen/responder_item_padding_horizontal"
+    android:paddingBottom="@dimen/responder_item_padding_vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/flag"
+        android:layout_width="@dimen/responder_item_icon_size"
+        android:layout_height="@dimen/responder_item_icon_size"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        app:cardCornerRadius="@dimen/responder_item_icon_radius">
+
+        <ImageView
+            android:id="@+id/iconFlag"
+            android:layout_width="@dimen/responder_item_icon_size"
+            android:layout_height="@dimen/responder_item_icon_size"
+            android:scaleType="centerCrop" />
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/currency_info_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/responder_item_key_margin_start"
+        android:layout_toEndOf="@id/flag"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtKey"
+            style="@style/RateItemKeyTextView"
+            tools:text="AUD" />
+
+        <TextView
+            android:id="@+id/txtName"
+            style="@style/RateItemTextView"
+            tools:text="Japanese Yen" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etxtAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="numberDecimal"
+        android:textSize="@dimen/responder_item_text_amount_text_size"
+        android:theme="@style/EditTextTheme"
+        android:visibility="gone"
+        tools:text="123.45" />
+
+    <TextView
+        android:id="@+id/txtAmount"
+        style="@style/BaseTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/bg_underline"
+        android:paddingBottom="@dimen/responder_item_text_amount_padding_bottom"
+        android:textSize="@dimen/responder_item_text_amount_text_size"
+        android:visibility="gone"
+        tools:text="123.45" />
+
+    <View
+        android:id="@+id/clickIndicator"
+        android:layout_width="@dimen/responder_item_click_indicator_size"
+        android:layout_height="@dimen/responder_item_click_indicator_size"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle_filled"
+        android:visibility="gone" />
+
+</RelativeLayout>

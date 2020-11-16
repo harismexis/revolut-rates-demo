@@ -10,8 +10,8 @@ import com.example.rates.viewholder.BaseResponderViewHolder
 import com.example.rates.viewholder.FirstResponderViewHolder
 import com.example.rates.viewholder.ResponderViewHolder
 
-class RateAdapter(
-    private var rates: List<CurrencyModel>,
+class CurrencyAdapter(
+    private var models: List<CurrencyModel>,
     private var responderListener: FirstResponderViewHolder.FirstResponderListener,
     private var itemClickListener: ResponderViewHolder.ItemClickListener
 ) : RecyclerView.Adapter<BaseResponderViewHolder>() {
@@ -19,7 +19,6 @@ class RateAdapter(
     companion object {
         const val VIEW_TYPE_RESPONDER = 0
         const val VIEW_TYPE_CLIENT = 1
-        const val FIRST_CLIENT_POSITION = 1
     }
 
     override fun onCreateViewHolder(
@@ -27,7 +26,7 @@ class RateAdapter(
         viewType: Int
     ): BaseResponderViewHolder {
         val view: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.rate_item, parent, false)
+            .inflate(R.layout.responder_item, parent, false)
         return when (viewType) {
             VIEW_TYPE_RESPONDER -> FirstResponderViewHolder(view, responderListener)
             else -> ResponderViewHolder(view, itemClickListener)
@@ -38,7 +37,7 @@ class RateAdapter(
         viewHolder: BaseResponderViewHolder,
         position: Int
     ) {
-        viewHolder.bind(rates[position], position)
+        viewHolder.bind(models[position], position)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -49,11 +48,16 @@ class RateAdapter(
     }
 
     override fun getItemCount(): Int {
-        return rates.size
+        return models.size
     }
 
     override fun getItemId(position: Int): Long {
-        return rates[position].currencyCode.id
+        return models[position].currencyCode.id
+    }
+
+    override fun onViewDetachedFromWindow(holder: BaseResponderViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.unbind()
     }
 
     fun notifyClientsChanged() {

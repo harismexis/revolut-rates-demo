@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.example.rates.extensions.getFlagForCurrency
 
 data class CurrencyModel(
-    var currencyCode: CurrencyCode,
+    var currencyCode: Currency,
     var rate: Float?,
     var baseAmount: Float?
 )

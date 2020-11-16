@@ -17,8 +17,7 @@ import com.example.rates.extensions.setTextOrUnknown
 import com.example.rates.model.CurrencyModel
 import com.example.rates.model.getFlag
 
-
-open class BaseResponderViewHolder(
+abstract class BaseResponderViewHolder(
     view: View
 ) : RecyclerView.ViewHolder(view) {
 
@@ -26,6 +25,8 @@ open class BaseResponderViewHolder(
     private var txtKey: TextView = itemView.findViewById(R.id.txtKey)
     private var txtName: TextView = itemView.findViewById(R.id.txtName)
     protected var etxtAmount: EditText = itemView.findViewById(R.id.etxtAmount)
+    protected var txtAmount: TextView = itemView.findViewById(R.id.txtAmount)
+    protected var clickIndicator: View = itemView.findViewById(R.id.clickIndicator)
 
     open fun bind(
         item: CurrencyModel?,
@@ -46,27 +47,13 @@ open class BaseResponderViewHolder(
                 ) {
                     iconFlag.setImageBitmap(resource)
                 }
+
                 override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
             })
 
-//        Glide
-//            .with(itemView.context)
-//            .asBitmap()
-//            .load(item.getFlag())
-//            .diskCacheStrategy(DiskCacheStrategy.NONE)
-//            .skipMemoryCache(true)
-//            .dontAnimate()
-//            .into(object : SimpleTarget<Bitmap?>() {
-//                override fun onResourceReady(
-//                    resource: Bitmap,
-//                    transition: Transition<in Bitmap?>?
-//                ) {
-//                    iconFlag.setImageBitmap(resource)
-//                }
-//            })
-
-        // iconFlag.setImageDrawable(ContextCompat.getDrawable(itemView.context, item.getFlag()))
         txtKey.setTextOrUnknown(item?.currencyCode?.key)
         txtName.setTextOrUnknown(item?.currencyCode?.description)
     }
+
+    abstract fun unbind()
 }

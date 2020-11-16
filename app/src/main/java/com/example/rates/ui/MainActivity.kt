@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rates.R
-import com.example.rates.adapter.RateAdapter
+import com.example.rates.adapter.CurrencyAdapter
 import com.example.rates.model.CurrencyModel
 import com.example.rates.viewholder.FirstResponderViewHolder
 import com.example.rates.viewholder.ResponderViewHolder
@@ -15,7 +15,6 @@ import com.example.rates.viewmodel.MainViewModel
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-
 
 class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
     FirstResponderViewHolder.FirstResponderListener {
@@ -25,8 +24,8 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
 
     private lateinit var viewModel: MainViewModel
 
-    private var rates: MutableList<CurrencyModel> = mutableListOf()
-    private lateinit var adapter: RateAdapter
+    private var currencies: MutableList<CurrencyModel> = mutableListOf()
+    private lateinit var adapter: CurrencyAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -79,7 +78,8 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
 
     private fun initRecycler() {
         enableAnimationOnRecycler(false)
-        adapter = RateAdapter(rates, this, this)
+        currencies.addAll(viewModel.getInitialUiModels())
+        adapter = CurrencyAdapter(currencies, this, this)
         adapter.setHasStableIds(true)
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
@@ -94,8 +94,8 @@ class MainActivity : AppCompatActivity(), ResponderViewHolder.ItemClickListener,
     }
 
     private fun updateRecycler(list: List<CurrencyModel>) {
-        rates.clear()
-        rates.addAll(list)
+        currencies.clear()
+        currencies.addAll(list)
         adapter.notifyClientsChanged()
     }
 

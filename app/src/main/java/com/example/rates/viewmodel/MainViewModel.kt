@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.rates.extensions.convertToUiModels
 import com.example.rates.extensions.getErrorMessage
-import com.example.rates.model.CurrencyCode.EUR
+import com.example.rates.model.Currency
+import com.example.rates.model.Currency.EUR
 import com.example.rates.model.CurrencyModel
 import com.example.rates.model.RateResponse
 import com.example.rates.repository.RatesRepository
@@ -28,6 +29,7 @@ class MainViewModel @Inject constructor(
     companion object {
         private const val INITIAL_BASE_AMOUNT = 1.0f
         private const val ZERO_AMOUNT = 0.0f
+        private const val INITIAL_RATE = 0.0f
     }
 
     private val TAG = MainViewModel::class.qualifiedName
@@ -97,6 +99,16 @@ class MainViewModel @Inject constructor(
             return !it.isDisposed
         }
         return false
+    }
+
+    fun getInitialUiModels(): MutableList<CurrencyModel> {
+        val list = ArrayList<CurrencyModel>()
+        Currency.values().forEach {
+            list.add(
+                CurrencyModel(it, INITIAL_RATE, INITIAL_BASE_AMOUNT)
+            )
+        }
+        return list
     }
 
 }

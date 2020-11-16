@@ -3,6 +3,7 @@ package com.example.rates.viewholder
 import android.view.View
 import com.example.rates.model.CurrencyModel
 import com.example.rates.model.getAmount
+import com.example.rates.util.playAnimation
 
 class ResponderViewHolder(
     view: View,
@@ -18,13 +19,16 @@ class ResponderViewHolder(
         position: Int
     ) {
         super.bind(item, position)
-        etxtAmount.setText(item.getAmount().toString())
-        etxtAmount.isEnabled = false
+        txtAmount.visibility = View.VISIBLE
+        txtAmount.text = item.getAmount().toString()
         itemView.setOnClickListener {
             item?.let {
-                itemClickListener?.onItemClick(it, position)
+                playAnimation(clickIndicator) { itemClickListener?.onItemClick(item, position) }
             }
         }
     }
 
+    override fun unbind() {
+        // Not implemented
+    }
 }

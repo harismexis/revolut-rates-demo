@@ -1,6 +1,6 @@
 package com.example.rates.model
 
-enum class CurrencyCode(
+enum class Currency(
     val id: Long,
     val key: String,
     val description: String
