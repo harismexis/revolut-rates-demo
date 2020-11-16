@@ -4,15 +4,15 @@ import com.example.rates.model.RateResponse
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 
-fun getFakeResponse(jsonString: String): RateResponse {
+private fun convertStringToResponse(jsonString: String): RateResponse {
     val json: JsonObject = Gson().fromJson(jsonString, JsonObject::class.java)
     return Gson().fromJson(json, RateResponse::class.java)
 }
 
 fun getFakeResponseEuro(): RateResponse {
-    return getFakeResponse(fakeResponseEuro())
+    return convertStringToResponse(fakeResponseEuro())
 }
 
 fun getFakeResponseAud(): RateResponse {
-    return getFakeResponse(fakeResponseAud())
+    return convertStringToResponse(fakeResponseAud())
 }

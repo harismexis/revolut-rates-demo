@@ -12,7 +12,6 @@ import com.example.rates.model.CurrencyModel
 import com.example.rates.model.RateResponse
 import com.example.rates.repository.RatesRepository
 import com.example.rates.util.BaseSchedulerProvider
-import com.example.rates.util.SchedulerProvider
 import com.example.rates.util.setSchedulersObservable
 import com.example.rates.util.setSchedulersSingle
 import io.reactivex.Observable
@@ -23,11 +22,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    var rateRepository: RatesRepository
+    var rateRepository: RatesRepository,
+    var schedulerProvider: BaseSchedulerProvider
 ) : ViewModel() {
 
     private var disposables: CompositeDisposable? = null
-    private var schedulerProvider: BaseSchedulerProvider = SchedulerProvider()
 
     companion object {
         private const val INITIAL_BASE_AMOUNT = 1.0f
@@ -112,10 +111,6 @@ class MainViewModel @Inject constructor(
             )
         }
         return list
-    }
-
-    fun setSchedulerProvider(provider: BaseSchedulerProvider) {
-        this.schedulerProvider = provider
     }
 
 }

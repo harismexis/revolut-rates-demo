@@ -55,8 +55,7 @@ class MainViewModelTest {
     }
 
     private fun initClassUnderTest() {
-        mainViewModel = MainViewModel(mockRatesRepository)
-        mainViewModel.setSchedulerProvider(testSchedulerProvider)
+        mainViewModel = MainViewModel(mockRatesRepository, testSchedulerProvider)
         mainViewModel.setBaseCurrency(BASE_CURRENCY_EUR)
         mainViewModel.rates.observeForever(observer)
     }
@@ -78,6 +77,7 @@ class MainViewModelTest {
         verify(mockRatesRepository, times(2)).getRatesSingle(BASE_CURRENCY_EUR)
         verify(observer, times(2)).onChanged(mainViewModel.rates.value)
         Assert.assertEquals(mainViewModel.rates.value!![0].currencyCode.key, BASE_CURRENCY_EUR)
+        assertUiModelsListHasExpectedSize()
     }
 
     @Test
@@ -95,10 +95,11 @@ class MainViewModelTest {
         verify(observer, times(1)).onChanged(mainViewModel.rates.value)
         Assert.assertEquals(mainViewModel.rates.value!![0].currencyCode.key, BASE_CURRENCY_EUR)
         Assert.assertEquals(mainViewModel.rates.value!![1].currencyCode.key, BASE_CURRENCY_AUD)
+        assertUiModelsListHasExpectedSize()
     }
 
     @Test
-    fun rateUpdateReturnsInvalidResponse_dataIsUpdatedToNull() {
+    fun rateUpdateReturnsInvalidResponse_uiModelsListIsEmpty() {
         // given
         `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
             Single.just(mockRateResponse)
@@ -117,9 +118,10 @@ class MainViewModelTest {
 
     @Test
     fun baseCurrencyChanges_networkCallCurrencyParameterIsUpdatedAndDataIsUpdated() {
+        val fakeResponse = getFakeResponseEuro()
         // given
         `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
-            Single.just(getFakeResponseEuro())
+            Single.just(fakeResponse)
         )
 
         // when
@@ -141,6 +143,11 @@ class MainViewModelTest {
         verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_AUD)
         Assert.assertEquals(mainViewModel.rates.value!![0].currencyCode.key, BASE_CURRENCY_AUD)
         Assert.assertEquals(mainViewModel.rates.value!![1].currencyCode.key, BASE_CURRENCY_BGN)
+        assertUiModelsListHasExpectedSize()
+    }
+
+    private fun assertUiModelsListHasExpectedSize() {
+        Assert.assertTrue(mainViewModel.rates.value!!.size == 32)
     }
 
 }

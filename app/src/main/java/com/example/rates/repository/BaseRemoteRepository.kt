@@ -8,7 +8,6 @@ import javax.inject.Inject
 open class BaseRemoteRepository @Inject constructor() {
 
     companion object {
-        // https://hiring.revolut.codes/api/android/latest?base=EUR
         const val BASE_URL = "https://hiring.revolut.codes/api/android/"
     }
 
