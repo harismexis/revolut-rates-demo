@@ -2,9 +2,8 @@ package com.example.rates.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.example.rates.model.Currency
-import com.example.rates.model.CurrencyModel
-import com.example.rates.model.RateResponse
+import com.example.rates.extensions.convertToUiModels
+import com.example.rates.model.*
 import com.example.rates.repository.RatesRepository
 import com.example.rates.util.TrampolineSchedulerProvider
 import com.example.rates.util.getFakeResponseAud
@@ -27,6 +26,11 @@ import org.mockito.MockitoAnnotations
 @RunWith(JUnit4::class)
 class MainViewModelTest {
 
+    companion object {
+        const val EXPECTED_NUMBER_OF_ITEMS = 32
+        const val USER_INPUT = "135.040"
+    }
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -41,10 +45,8 @@ class MainViewModelTest {
 
     private var BASE_CURRENCY_EUR: String = Currency.EUR.key
     private var BASE_CURRENCY_AUD: String = Currency.AUD.key
-    private var BASE_CURRENCY_BGN: String = Currency.BGN.key
 
     private lateinit var mainViewModel: MainViewModel
-
     private var testSchedulerProvider = TrampolineSchedulerProvider()
 
     @Before
@@ -57,6 +59,7 @@ class MainViewModelTest {
     private fun initClassUnderTest() {
         mainViewModel = MainViewModel(mockRatesRepository, testSchedulerProvider)
         mainViewModel.setBaseCurrency(BASE_CURRENCY_EUR)
+        mainViewModel.updateBaseAmount(USER_INPUT)
         mainViewModel.rates.observeForever(observer)
     }
 
@@ -76,8 +79,6 @@ class MainViewModelTest {
         // then
         verify(mockRatesRepository, times(2)).getRatesSingle(BASE_CURRENCY_EUR)
         verify(observer, times(2)).onChanged(mainViewModel.rates.value)
-        Assert.assertEquals(mainViewModel.rates.value!![0].currencyCode.key, BASE_CURRENCY_EUR)
-        assertUiModelsListHasExpectedSize()
     }
 
     @Test
@@ -94,8 +95,6 @@ class MainViewModelTest {
         verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_EUR)
         verify(observer, times(1)).onChanged(mainViewModel.rates.value)
         Assert.assertEquals(mainViewModel.rates.value!![0].currencyCode.key, BASE_CURRENCY_EUR)
-        Assert.assertEquals(mainViewModel.rates.value!![1].currencyCode.key, BASE_CURRENCY_AUD)
-        assertUiModelsListHasExpectedSize()
     }
 
     @Test
@@ -117,37 +116,101 @@ class MainViewModelTest {
     }
 
     @Test
-    fun baseCurrencyChanges_networkCallCurrencyParameterIsUpdatedAndDataIsUpdated() {
-        val fakeResponse = getFakeResponseEuro()
+    fun rateUpdateRestartsAndResponderChanges_dataIsTheExpected() {
         // given
+        val fakeResponseEuro = getFakeResponseEuro()
         `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
-            Single.just(fakeResponse)
+            Single.just(fakeResponseEuro)
         )
+        var expectedModels =
+            fakeResponseEuro.convertToUiModels(BASE_CURRENCY_EUR, USER_INPUT.toFloat(), USER_INPUT)
 
         // when
         mainViewModel.startRateUpdate()
         Thread.sleep(200)
         mainViewModel.stopRateUpdate()
 
-        mainViewModel.setBaseCurrency(BASE_CURRENCY_AUD)
-        `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
-            Single.just(getFakeResponseAud())
-        )
+        // then
+        verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_EUR)
+        assertListIsTheExpected(expectedModels)
 
+        // given => First Responder changes to AUD
+        val newBaseAmount = getModelForCurrency(Currency.AUD.key, expectedModels)!!.amountAsString()
+        val fakeResponseAud = getFakeResponseAud()
+        `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
+            Single.just(fakeResponseAud)
+        )
+        expectedModels = fakeResponseAud.convertToUiModels(
+            BASE_CURRENCY_AUD,
+            newBaseAmount.toFloat(),
+            newBaseAmount
+        )
+        mainViewModel.setBaseCurrency(BASE_CURRENCY_AUD)
+        mainViewModel.updateBaseAmount(newBaseAmount)
+
+        // when
         mainViewModel.startRateUpdate()
         Thread.sleep(200)
         mainViewModel.stopRateUpdate()
 
         // then
-        verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_EUR)
         verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_AUD)
-        Assert.assertEquals(mainViewModel.rates.value!![0].currencyCode.key, BASE_CURRENCY_AUD)
-        Assert.assertEquals(mainViewModel.rates.value!![1].currencyCode.key, BASE_CURRENCY_BGN)
-        assertUiModelsListHasExpectedSize()
+        assertListIsTheExpected(expectedModels)
     }
 
     private fun assertUiModelsListHasExpectedSize() {
-        Assert.assertTrue(mainViewModel.rates.value!!.size == 32)
+        Assert.assertTrue(mainViewModel.rates.value!!.size == EXPECTED_NUMBER_OF_ITEMS)
+    }
+
+    private fun getModelForCurrency(key: String, models: List<CurrencyModel>): CurrencyModel? {
+        for (model in models) {
+            if (model.currencyCode.key == key) return model
+        }
+        return null
+    }
+
+    private fun assertListIsTheExpected(expectedUiModels: List<CurrencyModel>) {
+        assertUiModelsListHasExpectedSize()
+
+        expectedUiModels.forEachIndexed { index, element ->
+
+            Assert.assertEquals(
+                element.currencyCode.key,
+                mainViewModel.rates.value!![index].currencyCode.key
+            )
+
+            Assert.assertEquals(
+                element.currencyCode.description,
+                mainViewModel.rates.value!![index].currencyCode.description
+            )
+
+            Assert.assertEquals(
+                element.currencyCode.id,
+                mainViewModel.rates.value!![index].currencyCode.id
+            )
+
+            Assert.assertEquals(
+                element.getAmount(),
+                mainViewModel.rates.value!![index].getAmount()
+            )
+
+            Assert.assertEquals(
+                element.amountAsString(),
+                mainViewModel.rates.value!![index].amountAsString()
+            )
+
+            Assert.assertEquals(
+                element.rate,
+                mainViewModel.rates.value!![index].rate
+            )
+
+            Assert.assertEquals(
+                element.firstResponderInput,
+                mainViewModel.rates.value!![index].firstResponderInput
+            )
+
+        }
+
     }
 
 }

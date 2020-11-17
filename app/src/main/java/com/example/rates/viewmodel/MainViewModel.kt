@@ -91,6 +91,21 @@ class MainViewModel @Inject constructor(
         disposables?.add(getScheduleDisposable())
     }
 
+    fun stopRateUpdate() {
+        disposables?.dispose()
+        disposables = null
+    }
+
+    fun getInitialUiModels(): MutableList<CurrencyModel> {
+        val list = ArrayList<CurrencyModel>()
+        Currency.values().forEach {
+            list.add(
+                CurrencyModel(it, INITIAL_RATE, baseAmount, FIRST_RESPONDER_INITIAL_INPUT)
+            )
+        }
+        return list
+    }
+
     private fun getScheduleDisposable(): Disposable {
         return Observable.interval(0, 1, TimeUnit.SECONDS)
             .flatMapSingle { getRatesSingle() }
@@ -117,26 +132,11 @@ class MainViewModel @Inject constructor(
 
     }
 
-    fun stopRateUpdate() {
-        disposables?.dispose()
-        disposables = null
-    }
-
     private fun isRateUpdateActive(): Boolean {
         disposables?.let {
             return !it.isDisposed
         }
         return false
-    }
-
-    fun getInitialUiModels(): MutableList<CurrencyModel> {
-        val list = ArrayList<CurrencyModel>()
-        Currency.values().forEach {
-            list.add(
-                CurrencyModel(it, INITIAL_RATE, baseAmount, FIRST_RESPONDER_INITIAL_INPUT)
-            )
-        }
-        return list
     }
 
 }
