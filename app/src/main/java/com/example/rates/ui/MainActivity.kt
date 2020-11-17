@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(),
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: MainViewModel
-    private var currencies: MutableList<CurrencyModel> = mutableListOf()
+    private var uiModels: MutableList<CurrencyModel> = mutableListOf()
     private lateinit var adapter: CurrencyAdapter
     private var networkListener: NetworkConnectionListener? = null
 
@@ -58,10 +58,14 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onItemClick(
-        item: CurrencyModel,
         position: Int
     ) {
+        val item = uiModels[position]
         viewModel.onFirstResponderChange(item)
+        viewModel.updateModelsWithFirstResponder(uiModels, item)
+        adapter.notifyDataSetChanged()
+        recycler.smoothScrollToPosition(0)
+        viewModel.startRateUpdate()
     }
 
     override fun beforeResponderTextChanged(text: String) {
@@ -80,8 +84,8 @@ class MainActivity : AppCompatActivity(),
 
     private fun initRecycler() {
         enableAnimationOnRecycler(false)
-        currencies.addAll(viewModel.getInitialUiModels())
-        adapter = CurrencyAdapter(currencies, this, this)
+        uiModels.addAll(viewModel.getInitialUiModels())
+        adapter = CurrencyAdapter(uiModels, this, this)
         adapter.setHasStableIds(true)
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
@@ -98,8 +102,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun updateRecycler(list: List<CurrencyModel>) {
-        currencies.clear()
-        currencies.addAll(list)
+        uiModels.clear()
+        uiModels.addAll(list)
         adapter.notifyDataChanged()
     }
 

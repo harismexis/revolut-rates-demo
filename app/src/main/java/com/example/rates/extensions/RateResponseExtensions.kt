@@ -25,7 +25,6 @@ fun RateResponse?.convertToUiModels(
                     uiModels.add(uiModel)
                 }
             }
-            uiModels.sortedWith((compareBy { item -> item.currencyCode.key }))
             uiModels.add(0, firstResponder)
         }
     }

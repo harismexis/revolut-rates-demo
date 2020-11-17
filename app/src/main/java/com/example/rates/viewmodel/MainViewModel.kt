@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val TAG = MainViewModel::class.qualifiedName
-    private val uiModels = ArrayList<CurrencyModel>()
+    private val uiModels: MutableList<CurrencyModel> = mutableListOf()
     private var baseAmount: Float? = FIRST_RESPONDER_INITIAL_INPUT.toFloat()
     private var firstResponderInput: String? = FIRST_RESPONDER_INITIAL_INPUT
     private var baseCurrency: String = EUR.key
@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(
     private val mRates = MutableLiveData<List<CurrencyModel>?>()
     val rates: LiveData<List<CurrencyModel>?>
         get() = mRates
-    
+
     fun updateBaseAmount(amount: String?) {
         amount?.let {
             this.firstResponderInput = amount
@@ -63,12 +63,24 @@ class MainViewModel @Inject constructor(
     }
 
     fun onFirstResponderChange(
-        item: CurrencyModel,
+        newFirstResponder: CurrencyModel,
     ) {
         stopRateUpdate()
-        setBaseCurrency(item.currencyCode.key)
-        updateBaseAmount(item.amountAsString())
-        startRateUpdate()
+        setBaseCurrency(newFirstResponder.currencyCode.key)
+        updateBaseAmount(newFirstResponder.amountAsString())
+    }
+
+    fun updateModelsWithFirstResponder(items: List<CurrencyModel>, model: CurrencyModel) {
+        val arrayList = (items as ArrayList)
+        arrayList.remove(model)
+        arrayList.sortWith { object1, object2 ->
+            object1.currencyCode.key
+                .compareTo(object2.currencyCode.key)
+        }
+        arrayList.add(0, model)
+        for (item in arrayList) {
+            item.firstResponderInput = item.amountAsString()
+        }
     }
 
     fun startRateUpdate() {

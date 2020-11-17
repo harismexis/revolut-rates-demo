@@ -11,7 +11,7 @@ class ResponderViewHolder(
 ) : BaseResponderViewHolder(view) {
 
     interface ItemClickListener {
-        fun onItemClick(item: CurrencyModel, position: Int)
+        fun onItemClick(position: Int)
     }
 
     override fun bind(
@@ -23,7 +23,7 @@ class ResponderViewHolder(
         txtAmount.text = item.amountAsString()
         itemView.setOnClickListener {
             item?.let {
-                playAnimation(clickIndicator) { itemClickListener?.onItemClick(item, position) }
+                playAnimation(clickIndicator) { itemClickListener?.onItemClick(position) }
             }
         }
     }
