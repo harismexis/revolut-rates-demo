@@ -70,7 +70,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun rateUpdateStartsAndStops_networkCallMadeAndDataUpdatedExpectedTimes() {
+    fun rateUpdateStartsAndStops_networkCallAndDataUpdateHappenExpectedTimes() {
         // when
         mainViewModel.startRateUpdate()
         Thread.sleep(1500)
@@ -116,14 +116,16 @@ class MainViewModelTest {
     }
 
     @Test
-    fun rateUpdateRestartsAndResponderChanges_dataIsTheExpected() {
+    fun rateUpdateRestartsAndFirstResponderChanges_dataIsTheExpected() {
         // given
         val fakeResponseEuro = getFakeResponseEuro()
         `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
             Single.just(fakeResponseEuro)
         )
-        var expectedModels =
-            fakeResponseEuro.convertToUiModels(BASE_CURRENCY_EUR, USER_INPUT.toFloat(), USER_INPUT)
+        var expectedModels = fakeResponseEuro.convertToUiModels(
+            BASE_CURRENCY_EUR,
+            USER_INPUT.toFloat(),
+            USER_INPUT)
 
         // when
         mainViewModel.startRateUpdate()
@@ -132,9 +134,9 @@ class MainViewModelTest {
 
         // then
         verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_EUR)
-        assertListIsTheExpected(expectedModels)
+        assertUiModelsAreTheExpected(expectedModels)
 
-        // given => First Responder changes to AUD
+        // First Responder changes to AUD
         val newBaseAmount = getModelForCurrency(Currency.AUD.key, expectedModels)!!.amountAsString()
         val fakeResponseAud = getFakeResponseAud()
         `when`(mockRatesRepository.getRatesSingle(any())).thenReturn(
@@ -155,7 +157,7 @@ class MainViewModelTest {
 
         // then
         verify(mockRatesRepository, times(1)).getRatesSingle(BASE_CURRENCY_AUD)
-        assertListIsTheExpected(expectedModels)
+        assertUiModelsAreTheExpected(expectedModels)
     }
 
     private fun assertUiModelsListHasExpectedSize() {
@@ -169,43 +171,43 @@ class MainViewModelTest {
         return null
     }
 
-    private fun assertListIsTheExpected(expectedUiModels: List<CurrencyModel>) {
+    private fun assertUiModelsAreTheExpected(expectedUiModels: List<CurrencyModel>) {
         assertUiModelsListHasExpectedSize()
 
-        expectedUiModels.forEachIndexed { index, element ->
+        expectedUiModels.forEachIndexed { index, expectedUiModel ->
 
             Assert.assertEquals(
-                element.currencyCode.key,
+                expectedUiModel.currencyCode.key,
                 mainViewModel.rates.value!![index].currencyCode.key
             )
 
             Assert.assertEquals(
-                element.currencyCode.description,
+                expectedUiModel.currencyCode.description,
                 mainViewModel.rates.value!![index].currencyCode.description
             )
 
             Assert.assertEquals(
-                element.currencyCode.id,
+                expectedUiModel.currencyCode.id,
                 mainViewModel.rates.value!![index].currencyCode.id
             )
 
             Assert.assertEquals(
-                element.getAmount(),
+                expectedUiModel.getAmount(),
                 mainViewModel.rates.value!![index].getAmount()
             )
 
             Assert.assertEquals(
-                element.amountAsString(),
+                expectedUiModel.amountAsString(),
                 mainViewModel.rates.value!![index].amountAsString()
             )
 
             Assert.assertEquals(
-                element.rate,
+                expectedUiModel.rate,
                 mainViewModel.rates.value!![index].rate
             )
 
             Assert.assertEquals(
-                element.firstResponderInput,
+                expectedUiModel.firstResponderInput,
                 mainViewModel.rates.value!![index].firstResponderInput
             )
 
