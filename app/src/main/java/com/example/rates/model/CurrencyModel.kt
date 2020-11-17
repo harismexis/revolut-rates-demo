@@ -6,7 +6,8 @@ import com.example.rates.extensions.getFlagForCurrency
 data class CurrencyModel(
     var currencyCode: Currency,
     var rate: Float?,
-    var baseAmount: Float?
+    var baseAmount: Float?,
+    var firstResponderInput: String?
 )
 
 @DrawableRes

@@ -6,7 +6,8 @@ import com.example.rates.model.RateResponse
 fun RateResponse?.convertToUiModels(
     baseCurrencyKey: String,
     baseAmount: Float?,
-    ): List<CurrencyModel> {
+    firstResponderInput: String?
+): List<CurrencyModel> {
     val uiModels = ArrayList<CurrencyModel>()
     lateinit var firstResponder: CurrencyModel
     this?.let { it ->
@@ -15,7 +16,8 @@ fun RateResponse?.convertToUiModels(
                 val uiModel = CurrencyModel(
                     entry.key,
                     entry.value,
-                    baseAmount
+                    baseAmount,
+                    firstResponderInput
                 )
                 if (entry.key.key == baseCurrencyKey) {
                     firstResponder = uiModel

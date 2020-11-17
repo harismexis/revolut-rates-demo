@@ -70,14 +70,12 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onResponderTextChanged(text: String) {
-        val amount = viewModel.filterResponderText(text)
-        viewModel.setBaseAmount(amount.toFloat())
+        viewModel.updateBaseAmount(text)
         adapter.notifyDataChanged()
     }
 
     override fun afterResponderTextChanged(text: String) {
-        val amount = viewModel.filterResponderText(text)
-        viewModel.setBaseAmount(amount.toFloat())
+        viewModel.updateBaseAmount(text)
         viewModel.startRateUpdate()
     }
 

@@ -29,32 +29,30 @@ class MainViewModel @Inject constructor(
     private var disposables: CompositeDisposable? = null
 
     companion object {
-        private const val INITIAL_BASE_AMOUNT = 1.0f
+        private const val FIRST_RESPONDER_INITIAL_INPUT = "0.0"
         private const val ZERO_AMOUNT = 0.0f
         private const val INITIAL_RATE = 0.0f
     }
 
     private val TAG = MainViewModel::class.qualifiedName
     private val uiModels = ArrayList<CurrencyModel>()
-    private var baseAmount: Float? = INITIAL_BASE_AMOUNT
+    private var baseAmount: Float? = FIRST_RESPONDER_INITIAL_INPUT.toFloat()
+    private var firstResponderInput: String? = FIRST_RESPONDER_INITIAL_INPUT
     private var baseCurrency: String = EUR.key
 
     private val mRates = MutableLiveData<List<CurrencyModel>?>()
     val rates: LiveData<List<CurrencyModel>?>
         get() = mRates
-
-    fun setBaseAmount(amount: Float?) {
+    
+    fun updateBaseAmount(amount: String?) {
         amount?.let {
-            this.baseAmount = amount
+            this.firstResponderInput = amount
+            baseAmount = if (amount.isNotBlank()) {
+                amount.toFloat()
+            } else {
+                ZERO_AMOUNT
+            }
         }
-    }
-
-    fun filterResponderText(text: String): String {
-        var amount = ZERO_AMOUNT.toString()
-        if (text.isNotBlank()) {
-            amount = text
-        }
-        return amount
     }
 
     fun setBaseCurrency(currency: String?) {
@@ -83,7 +81,7 @@ class MainViewModel @Inject constructor(
         return rateRepository.getRatesSingle(baseCurrency)
             .compose(setSchedulersSingle(schedulerProvider))
             .doOnSuccess {
-                val models = it.convertToUiModels(baseCurrency, baseAmount)
+                val models = it.convertToUiModels(baseCurrency, baseAmount, firstResponderInput)
                 uiModels.clear()
                 uiModels.addAll(models)
                 mRates.value = uiModels
@@ -111,7 +109,7 @@ class MainViewModel @Inject constructor(
         val list = ArrayList<CurrencyModel>()
         Currency.values().forEach {
             list.add(
-                CurrencyModel(it, INITIAL_RATE, INITIAL_BASE_AMOUNT)
+                CurrencyModel(it, INITIAL_RATE, baseAmount, FIRST_RESPONDER_INITIAL_INPUT)
             )
         }
         return list

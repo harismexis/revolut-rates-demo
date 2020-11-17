@@ -21,11 +21,8 @@ class FirstResponderViewHolder(
         position: Int
     ) {
         super.bind(item, position)
-        val currentBase = item?.baseAmount.toString()
+        etxtAmount.setText(item?.firstResponderInput)
         etxtAmount.visibility = View.VISIBLE
-        if (etxtAmount.text.toString() != currentBase) {
-            etxtAmount.setText(item?.baseAmount.toString())
-        }
         etxtAmount.addTextChangedListener(this)
     }
 
