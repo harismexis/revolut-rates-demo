@@ -70,17 +70,19 @@ class MainViewModel @Inject constructor(
         updateBaseAmount(newFirstResponder.amountAsString())
     }
 
-    fun updateModelsWithFirstResponder(items: List<CurrencyModel>, model: CurrencyModel) {
-        val arrayList = (items as ArrayList)
-        arrayList.remove(model)
-        arrayList.sortWith { object1, object2 ->
+    fun reorderModelsWithNewFirstResponder(model: CurrencyModel): List<CurrencyModel> {
+        val items = ArrayList<CurrencyModel>()
+        items.addAll(uiModels)
+        items.remove(model)
+        items.sortWith { object1, object2 ->
             object1.currencyCode.key
                 .compareTo(object2.currencyCode.key)
         }
-        arrayList.add(0, model)
-        for (item in arrayList) {
+        items.add(0, model)
+        for (item in items) {
             item.firstResponderInput = item.amountAsString()
         }
+        return items
     }
 
     fun startRateUpdate() {

@@ -60,12 +60,14 @@ class MainActivity : AppCompatActivity(),
     override fun onItemClick(
         position: Int
     ) {
-        val item = uiModels[position]
-        viewModel.onFirstResponderChange(item)
-        viewModel.updateModelsWithFirstResponder(uiModels, item)
+        val newFirstResponder = uiModels[position]
+        viewModel.onFirstResponderChange(newFirstResponder)
+        uiModels.clear()
+        uiModels.addAll(viewModel.reorderModelsWithNewFirstResponder(newFirstResponder))
         adapter.notifyDataSetChanged()
         recycler.smoothScrollToPosition(0)
         viewModel.startRateUpdate()
+        recycler.postDelayed({ recycler.smoothScrollToPosition(0) }, 500)
     }
 
     override fun beforeResponderTextChanged(text: String) {
