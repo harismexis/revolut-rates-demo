@@ -28,3 +28,10 @@ fun CurrencyModel?.getAmount(): Float {
     }
     return 0.0f
 }
+
+fun CurrencyModel?.amountAsString(): String {
+    this?.let {
+        return String.format("%.2f", it.getAmount())
+    }
+    return ""
+}

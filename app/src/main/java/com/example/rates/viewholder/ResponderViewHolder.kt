@@ -2,7 +2,7 @@ package com.example.rates.viewholder
 
 import android.view.View
 import com.example.rates.model.CurrencyModel
-import com.example.rates.model.getAmount
+import com.example.rates.model.amountAsString
 import com.example.rates.util.playAnimation
 
 class ResponderViewHolder(
@@ -20,7 +20,7 @@ class ResponderViewHolder(
     ) {
         super.bind(item, position)
         txtAmount.visibility = View.VISIBLE
-        txtAmount.text = item.getAmount().toString()
+        txtAmount.text = item.amountAsString()
         itemView.setOnClickListener {
             item?.let {
                 playAnimation(clickIndicator) { itemClickListener?.onItemClick(item, position) }

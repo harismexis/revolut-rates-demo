@@ -10,6 +10,7 @@ import com.example.rates.model.Currency
 import com.example.rates.model.Currency.EUR
 import com.example.rates.model.CurrencyModel
 import com.example.rates.model.RateResponse
+import com.example.rates.model.amountAsString
 import com.example.rates.repository.RatesRepository
 import com.example.rates.util.BaseSchedulerProvider
 import com.example.rates.util.setSchedulersObservable
@@ -59,6 +60,15 @@ class MainViewModel @Inject constructor(
         currency?.let {
             this.baseCurrency = currency
         }
+    }
+
+    fun onFirstResponderChange(
+        item: CurrencyModel,
+    ) {
+        stopRateUpdate()
+        setBaseCurrency(item.currencyCode.key)
+        updateBaseAmount(item.amountAsString())
+        startRateUpdate()
     }
 
     fun startRateUpdate() {

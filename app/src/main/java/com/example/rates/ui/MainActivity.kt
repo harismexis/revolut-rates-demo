@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(),
     private lateinit var viewModel: MainViewModel
     private var currencies: MutableList<CurrencyModel> = mutableListOf()
     private lateinit var adapter: CurrencyAdapter
-    private lateinit var networkListener: NetworkConnectionListener
+    private var networkListener: NetworkConnectionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -42,17 +42,18 @@ class MainActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        networkListener.startListen()
+        networkListener?.startListen()
     }
 
     override fun onPause() {
         super.onPause()
-        networkListener.stopListen()
+        networkListener?.stopListen()
         viewModel.stopRateUpdate()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        networkListener = null
         viewModel.stopRateUpdate()
     }
 
@@ -60,9 +61,7 @@ class MainActivity : AppCompatActivity(),
         item: CurrencyModel,
         position: Int
     ) {
-        viewModel.stopRateUpdate()
-        viewModel.setBaseCurrency(item.currencyCode.key)
-        viewModel.startRateUpdate()
+        viewModel.onFirstResponderChange(item)
     }
 
     override fun beforeResponderTextChanged(text: String) {
