@@ -17,8 +17,8 @@ class CurrencyAdapter(
 ) : RecyclerView.Adapter<BaseResponderViewHolder>() {
 
     companion object {
-        const val VIEW_TYPE_RESPONDER = 0
-        const val VIEW_TYPE_CLIENT = 1
+        const val VIEW_TYPE_FIRST_RESPONDER = 0
+        const val VIEW_TYPE_RESPONDER = 1
     }
 
     override fun onCreateViewHolder(
@@ -28,7 +28,7 @@ class CurrencyAdapter(
         val view: View = LayoutInflater.from(parent.context)
             .inflate(R.layout.responder_item, parent, false)
         return when (viewType) {
-            VIEW_TYPE_RESPONDER -> FirstResponderViewHolder(view, responderListener)
+            VIEW_TYPE_FIRST_RESPONDER -> FirstResponderViewHolder(view, responderListener)
             else -> ResponderViewHolder(view, itemClickListener)
         }
     }
@@ -42,8 +42,8 @@ class CurrencyAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            0 -> VIEW_TYPE_RESPONDER
-            else -> VIEW_TYPE_CLIENT
+            0 -> VIEW_TYPE_FIRST_RESPONDER
+            else -> VIEW_TYPE_RESPONDER
         }
     }
 
