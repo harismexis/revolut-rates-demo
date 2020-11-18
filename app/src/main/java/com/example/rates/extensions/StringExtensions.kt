@@ -7,7 +7,6 @@ import com.example.rates.model.Currency
 @DrawableRes
 fun String?.getFlagForCurrency(): Int {
     return when (this) {
-        Currency.EUR.key -> R.drawable.flag_eur
         Currency.AUD.key -> R.drawable.flag_aud
         Currency.BGN.key -> R.drawable.flag_bgn
         Currency.BRL.key -> R.drawable.flag_brl
@@ -16,6 +15,7 @@ fun String?.getFlagForCurrency(): Int {
         Currency.CNY.key -> R.drawable.flag_cny
         Currency.CZK.key -> R.drawable.flag_czk
         Currency.DKK.key -> R.drawable.flag_dkk
+        Currency.EUR.key -> R.drawable.flag_eur
         Currency.GBP.key -> R.drawable.flag_gbp
         Currency.HKD.key -> R.drawable.flag_hkd
         Currency.HRK.key -> R.drawable.flag_hrk
