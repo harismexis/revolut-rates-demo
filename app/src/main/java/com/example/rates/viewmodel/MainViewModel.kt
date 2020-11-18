@@ -36,6 +36,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val TAG = MainViewModel::class.qualifiedName
+    private var initialUiModels: List<CurrencyModel>
     private val uiModels: MutableList<CurrencyModel> = mutableListOf()
     private var baseAmount: Float? = FIRST_RESPONDER_INITIAL_INPUT.toFloat()
     private var firstResponderInput: String? = FIRST_RESPONDER_INITIAL_INPUT
@@ -44,6 +45,11 @@ class MainViewModel @Inject constructor(
     private val mRates = MutableLiveData<List<CurrencyModel>?>()
     val rates: LiveData<List<CurrencyModel>?>
         get() = mRates
+
+    init {
+        this.initialUiModels = createInitialUiModels()
+        this.uiModels.addAll(initialUiModels)
+    }
 
     fun updateBaseAmount(amount: String?) {
         amount?.let {
@@ -62,15 +68,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onFirstResponderChange(
-        newFirstResponder: CurrencyModel,
-    ) {
-        stopRateUpdate()
+    fun updateFirstResponderData(newFirstResponder: CurrencyModel) {
         setBaseCurrency(newFirstResponder.currencyCode.key)
         updateBaseAmount(newFirstResponder.amountAsString())
     }
 
-    fun reorderModelsWithNewFirstResponder(newFirstResponder: CurrencyModel): List<CurrencyModel> {
+    fun getReorderedModels(newFirstResponder: CurrencyModel): List<CurrencyModel> {
         val items = ArrayList<CurrencyModel>()
         items.addAll(uiModels)
         items.remove(newFirstResponder)
@@ -96,7 +99,7 @@ class MainViewModel @Inject constructor(
         disposables = null
     }
 
-    fun getInitialUiModels(): MutableList<CurrencyModel> {
+    private fun createInitialUiModels(): MutableList<CurrencyModel> {
         val list = ArrayList<CurrencyModel>()
         Currency.values().forEach {
             list.add(
@@ -104,6 +107,10 @@ class MainViewModel @Inject constructor(
             )
         }
         return list
+    }
+
+    fun getInitialUiModels(): List<CurrencyModel> {
+        return initialUiModels
     }
 
     private fun getScheduleDisposable(): Disposable {

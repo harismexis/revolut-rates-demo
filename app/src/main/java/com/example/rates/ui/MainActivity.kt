@@ -57,17 +57,20 @@ class MainActivity : AppCompatActivity(),
         viewModel.stopRateUpdate()
     }
 
-    override fun onItemClick(
-        position: Int
-    ) {
+    override fun onItemClick(position: Int) {
+        viewModel.stopRateUpdate()
         val newFirstResponder = uiModels[position]
-        viewModel.onFirstResponderChange(newFirstResponder)
-        uiModels.clear()
-        uiModels.addAll(viewModel.reorderModelsWithNewFirstResponder(newFirstResponder))
-        adapter.notifyDataSetChanged()
+        updateFirstResponder(newFirstResponder)
         recycler.smoothScrollToPosition(0)
         viewModel.startRateUpdate()
         recycler.postDelayed({ recycler.smoothScrollToPosition(0) }, 500)
+    }
+
+    private fun updateFirstResponder(newFirstResponder: CurrencyModel) {
+        viewModel.updateFirstResponderData(newFirstResponder)
+        uiModels.clear()
+        uiModels.addAll(viewModel.getReorderedModels(newFirstResponder))
+        adapter.notifyDataSetChanged()
     }
 
     override fun beforeResponderTextChanged(text: String) {
