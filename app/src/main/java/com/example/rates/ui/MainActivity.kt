@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(),
         updateFirstResponder(newFirstResponder)
         recycler.smoothScrollToPosition(0)
         viewModel.startRateUpdate()
-        recycler.postDelayed({ recycler.smoothScrollToPosition(0) }, 500)
+        viewModel.scheduleAction { recycler.smoothScrollToPosition(0) }
     }
 
     private fun updateFirstResponder(newFirstResponder: CurrencyModel) {

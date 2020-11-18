@@ -15,8 +15,10 @@ import com.example.rates.repository.RatesRepository
 import com.example.rates.util.BaseSchedulerProvider
 import com.example.rates.util.setSchedulersObservable
 import com.example.rates.util.setSchedulersSingle
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
@@ -30,7 +32,7 @@ class MainViewModel @Inject constructor(
     private var disposables: CompositeDisposable? = null
 
     companion object {
-        private const val FIRST_RESPONDER_INITIAL_INPUT = "0.0"
+        private const val FIRST_RESPONDER_INITIAL_INPUT = "1"
         private const val ZERO_AMOUNT = 0.0f
         private const val INITIAL_RATE = 0.0f
     }
@@ -111,6 +113,13 @@ class MainViewModel @Inject constructor(
 
     fun getInitialUiModels(): List<CurrencyModel> {
         return initialUiModels
+    }
+
+    fun scheduleAction(onComplete: () -> Unit) {
+        disposables?.add(Completable.timer(500,
+            TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+            .doOnComplete { onComplete() }
+            .subscribe())
     }
 
     private fun getScheduleDisposable(): Disposable {
