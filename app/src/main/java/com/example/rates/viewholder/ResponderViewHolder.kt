@@ -6,7 +6,6 @@ import com.example.rates.model.CurrencyModel
 import com.example.rates.model.amountAsString
 import com.example.rates.util.playAnimation
 
-
 class ResponderViewHolder(
     view: View,
     private var itemClickListener: ItemClickListener?
