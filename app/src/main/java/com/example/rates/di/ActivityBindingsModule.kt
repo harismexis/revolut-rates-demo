@@ -8,6 +8,6 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityBindingsModule {
 
     @ContributesAndroidInjector
-    abstract fun accountActivity(): MainActivity
+    abstract fun mainActivity(): MainActivity
 
 }
