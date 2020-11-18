@@ -33,7 +33,6 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation libraries
     implementation daggerDependancies
-    implementation 'androidx.cardview:cardview:1.0.0'
     implementation rxJavaDependencies
 
     kapt librariesKapt
