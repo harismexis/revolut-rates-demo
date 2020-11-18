@@ -9,7 +9,7 @@ interface RatesApi {
 
     @GET("latest")
     fun getRatesSingle(
-        @Query("base") page: String,
+        @Query("base") baseCurrency: String,
     ): Single<RateResponse?>
 
 }
